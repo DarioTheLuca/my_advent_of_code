@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const { findNumber } = require('./findNumber');
 
 const pathInput = path.join(__dirname,'day2_input.txt');
 
@@ -18,13 +19,13 @@ for(let j=0; j< rowsArr.length;j++){
     let maxR=0;
     for (let i=0; i<row.length;i++){
         if (row[i]==='V'){    
-            const num = Number(row[i-3]+row[i-2]);
+            const num = findNumber(row.substring(0,i+1),i);
             maxV=Math.max(num,maxV);
         }else if(row[i]==='R'){
-            const num = Number(row[i-3]+row[i-2]);
+            const num = findNumber(row.substring(0,i+1),i);
             maxR=Math.max(num,maxR);
         }else if(row[i]==='B'){
-            const num = Number(row[i-3]+row[i-2]);
+            const num = findNumber(row.substring(0,i+1),i);
             maxB=Math.max(num,maxB);           
         }
     }
