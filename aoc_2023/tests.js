@@ -7,6 +7,8 @@ const { day3_part1 } = require("./day3/day3_part1");
 const { day3_part2 } = require("./day3/day3_part2");
 const { day4_part1 } = require("./day4/day4_part1");
 const { day4_part2 } = require("./day4/day4_part2");
+const { day5_part1 } = require("./day5/day5_part1");
+const { day5_part2 } = require("./day5/day5_part2");
 
 const day1_part1_result = day1_part1();
 const day1_part2_result = day1_part2();
@@ -16,6 +18,8 @@ const day3_part1_result = day3_part1();
 const day3_part2_result = day3_part2();
 const day4_part1_result = day4_part1();
 const day4_part2_result = day4_part2();
+const day5_part1_result = day5_part1();
+const day5_part2_result = day5_part2();
 
 test(
   "day1_part1",
@@ -56,4 +60,15 @@ test(
   "day4_part2",
   day4_part2_result,
   correct_answers.correct_result_day4_part2
+);
+
+test(
+  "day5_part1",
+  day5_part1_result,
+  correct_answers.correct_result_day5_part1
+);
+test(
+  "day5_part2",
+  day5_part2_result,
+  correct_answers.correct_result_day5_part2
 );

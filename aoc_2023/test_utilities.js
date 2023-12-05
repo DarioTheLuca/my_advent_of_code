@@ -8,6 +8,8 @@ const correct_answers = {
   correct_result_day3_part2: 84363105,
   correct_result_day4_part1: 24542,
   correct_result_day4_part2: 8736438,
+  correct_result_day5_part1: 157211394,
+  correct_result_day5_part2: 50855035,
 };
 
 function test(fnToTest, result, correct_result) {
