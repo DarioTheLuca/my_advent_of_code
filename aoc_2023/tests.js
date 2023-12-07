@@ -18,13 +18,14 @@ const { day5_part1 } = require("./day5/day5_part1");
 const { day5_part2 } = require("./day5/day5_part2");
 const { day6_part1 } = require("./day6/day6_part1");
 const { day6_part2 } = require("./day6/day6_part2");
-
+const { day7_part1 } = require("./day7/day7_part1");
+const { day7_part2 } = require("./day7/day7_part2");
 if (isMainThread) {
   // This code runs in the main thread
 
   // Create two worker threads with different workerData
   const worker1 = new Worker(__filename, { workerData: { workerId: 1 } });
-  const worker2 = new Worker(__filename, { workerData: { workerId: 2 }});
+  const worker2 = new Worker(__filename, { workerData: { workerId: 2 } });
   worker1.on("message", (message) => console.log(message));
   worker2.on("message", (message) => console.log(message));
 
@@ -77,7 +78,13 @@ if (isMainThread) {
     correct_answers.correct_result_day4_part2
   );
 
+  const day5_part1_result = day5_part1();
 
+  test(
+    "day5_part1",
+    day5_part1_result,
+    correct_answers.correct_result_day5_part1
+  );
   const day6_part1_result = day6_part1();
   test(
     "day6_part1",
@@ -89,6 +96,18 @@ if (isMainThread) {
     "day6_part2",
     day6_part2_result,
     correct_answers.correct_result_day6_part2
+  );
+  const day7_part1_result = day7_part1();
+  test(
+    "day7_part1",
+    day7_part1_result,
+    correct_answers.correct_result_day7_part1
+  );
+  const day7_part2_result = day7_part2();
+  test(
+    "day7_part2",
+    day7_part2_result,
+    correct_answers.correct_result_day7_part2
   );
 } else {
   // This code runs in the worker thread
@@ -103,13 +122,6 @@ if (isMainThread) {
     parentPort.postMessage("finished worker1");
   } else if (workerData.workerId === 2) {
     // console.log("from worker 2");
-    // const day5_part1_result = day5_part1();
-
-    // test(
-    //   "day5_part1",
-    //   day5_part1_result,
-    //   correct_answers.correct_result_day5_part1
-    // );
     // parentPort.postMessage("finished worker2");
   }
 }
