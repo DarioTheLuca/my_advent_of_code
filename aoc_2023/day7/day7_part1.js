@@ -1,7 +1,9 @@
 const { rowsFromTextFile } = require("../../generateArrayFromTextFile");
-const { findValue } = require("./utils");
+const { findHandValue } = require("./utils");
 
 function day7_part1() {
+  const numberOfCardsInHand = 5;
+  //map the cards with a numeric value
   const map = {
     A: 14,
     K: 13,
@@ -18,21 +20,25 @@ function day7_part1() {
     2: 2,
   };
 
-  const rows = rowsFromTextFile("aoc_2023/day7/day7_input.txt").map((r) =>
+  const hands = rowsFromTextFile("aoc_2023/day7/day7_input.txt").map((r) =>
     r.split(" ").map((e, i) => (i === 1 ? Number(e) : e))
   );
 
-  const mapT = new Map();
+  //mapping the type(from 1 to 7) of hands with the hands that belong to that type
+  const mapType = new Map();
 
-  rows.forEach((r) => {
-    const v = findValue(r[0]);
-    if (mapT.has(v)) {
-      mapT.set(
-        v,
-        [...mapT.get(v), r].sort((a, b) => {
-          for (let i = 0; i < 5; i++) {
-            if (map[a[0][i]] === map[b[0][i]]) continue;
-            if (map[a[0][i]] > map[b[0][i]]) {
+  hands.forEach((hand) => {
+    const handCards = hand[0];
+    const valueHand = findHandValue(handCards);
+    if (mapType.has(valueHand)) {
+      mapType.set(
+        valueHand,
+        [...mapType.get(valueHand), hand].sort((a, b) => {
+          for (let i = 0; i < numberOfCardsInHand; i++) {
+            const valueHandA = map[a[0][i]];
+            const valueHandB = map[b[0][i]];
+            if (valueHandA === valueHandB) continue;
+            if (valueHandA > valueHandB) {
               return 1;
             } else {
               return -1;
@@ -41,21 +47,21 @@ function day7_part1() {
         })
       );
     } else {
-      mapT.set(v, [r]);
+      mapType.set(valueHand, [hand]);
     }
   });
 
-  const newA = [];
-  Array.from(mapT.keys())
+  const orderendHands = [];
+  Array.from(mapType.keys())
     .sort()
-    .forEach((k) => {
-      mapT.get(k).forEach((e) => newA.push(e));
+    .forEach((type) => {
+      mapType.get(type).forEach((hand) => orderendHands.push(hand));
     });
 
   let result = 0;
 
-  for (let i = 0; i < newA.length; i++) {
-    result = result + (i + 1) * newA[i][1];
+  for (let i = 0; i < orderendHands.length; i++) {
+    result = result + (i + 1) * orderendHands[i][1];
   }
 
   return result;

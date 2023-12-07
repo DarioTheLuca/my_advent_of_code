@@ -1,47 +1,59 @@
-function findValue(hand, jolly) {
-  const mapC = new Map();
-  for (let i = 0; i < hand.length; i++) {
-    if (mapC.has(hand[i])) {
-      mapC.set(hand[i], mapC.get(hand[i]) + 1);
+function findHandValue(hand, jolly) {
+  // ma the c
+  const mapCardsFrequency = new Map();
+  const len = hand.length;
+  for (let i = 0; i < len; i++) {
+    const currCard = hand[i];
+    if (mapCardsFrequency.has(currCard)) {
+      mapCardsFrequency.set(currCard, mapCardsFrequency.get(currCard) + 1);
     } else {
-      mapC.set(hand[i], 1);
+      mapCardsFrequency.set(currCard, 1);
     }
   }
 
-  if (jolly && mapC.has(jolly) && mapC.get(jolly) !== 5) {
-    let keyM = "";
-    let max = 0;
-    Array.from(mapC.keys()).forEach((k) => {
-      if (mapC.get(k) > max && k !== jolly) {
-        max = mapC.get(k);
-        keyM = k;
+  if (jolly && mapCardsFrequency.has(jolly)) {
+    let cardWithMaxFrequency = "";
+    let maxFrequency = 0;
+    Array.from(mapCardsFrequency.keys()).forEach((card) => {
+      if (mapCardsFrequency.get(card) > maxFrequency && card !== jolly) {
+        maxFrequency = mapCardsFrequency.get(card);
+        cardWithMaxFrequency = card;
       }
     });
-    mapC.set(keyM, mapC.get(keyM) + mapC.get(jolly));
-    mapC.delete(jolly);
+    // i add the jolly frequency to that of the cards with higher frequency
+    mapCardsFrequency.set(
+      cardWithMaxFrequency,
+      mapCardsFrequency.get(cardWithMaxFrequency) + mapCardsFrequency.get(jolly)
+    );
+    mapCardsFrequency.delete(jolly);
   }
-  const v = Array.from(mapC.values());
-  if (v.length === 5) {
+  const currenciesArray = Array.from(mapCardsFrequency.values());
+  // there are 5 different cards
+  if (currenciesArray.length === 5) { 
     return 1;
   }
-  if (v.length === 4) {
+  // there are three different cards and one pair
+  if (currenciesArray.length === 4) {
     return 2;
   }
-  if (v.length === 3) {
-    if (v.includes(3)) {
+  // there can be two pairs or three of a kind and two different cards
+  if (currenciesArray.length === 3) { 
+    if (currenciesArray.includes(3)) {
       return 4;
     } else {
       return 3;
     }
   }
-  if (v.length === 2) {
-    if (v.includes(3)) {
+  // there are or one pair and three of a kind, or four of a kind 
+  if (currenciesArray.length === 2) { 
+    if (currenciesArray.includes(3)) {
       return 5;
     } else {
       return 6;
     }
   }
+  // case 5 of the same card
   return 7;
 }
 
-module.exports = { findValue };
+module.exports = { findHandValue };
