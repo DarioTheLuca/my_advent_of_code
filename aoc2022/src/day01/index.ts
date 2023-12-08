@@ -24,13 +24,14 @@ const part1 = (rawInput: string) => {
 const part2 = (rawInput: string) => {
   const input = parseInput(rawInput);
   let top: number[] = [];
+  let numberTopMax = 3;
+
   for (const i of input) {
-    if (top.length < 3) {
+    if (top.length < numberTopMax) {
       top.push(i);
       top.sort((a, b) => a - b);
-    } else if (top.some((t) => i > t)) {
-      top.shift();
-      top.push(i);
+    } else if (i>top[0]) {
+      top[0]=i;;
       top.sort((a, b) => a - b);
     }
   }
