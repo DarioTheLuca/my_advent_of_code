@@ -30,8 +30,8 @@ const part2 = (rawInput: string) => {
     if (top.length < numberTopMax) {
       top.push(i);
       top.sort((a, b) => a - b);
-    } else if (i>top[0]) {
-      top[0]=i;;
+    } else if (i > top[0]) {
+      top[0] = i;
       top.sort((a, b) => a - b);
     }
   }
