@@ -5,14 +5,59 @@ const parseInput = (rawInput: string) => {
 };
 const part1 = (rawInput: string) => {
   let rows = parseInput(rawInput).map((r) => r.split(""));
-  return getSum(rows, 2, "#");
+  return getSumOptimezed(rows, 2, "#");
 };
 
 const part2 = (rawInput: string) => {
   let rows = parseInput(rawInput).map((r) => r.split(""));
-  return getSum(rows, 1_000_000, "#");
+  return getSumOptimezed(rows, 1_000_000, "#");
 };
 
+function getSumOptimezed(matrix: string[][], times: number, symbol: string) {
+  let id = 0;
+  const len = matrix.length;
+  const rowWithoutSymbolIndexs: number[] = [];
+  const colWithoutSymbolIndexs: number[] = [];
+  const map = new Map<number, { i: number; j: number }>();
+  for (let i = 0; i < len; i++) {
+    let hasColhash = false;
+    let hasRowHash = false;
+    for (let j = 0; j < len; j++) {
+      const colCell = matrix[j][i];
+      const rowCell = matrix[i][j];
+      if (rowCell === symbol) {
+        hasRowHash = true;
+        id++;
+        map.set(id, { i: i, j: j });
+      }
+      if (colCell === symbol) {
+        hasColhash = true;
+      }
+    }
+    !hasRowHash && rowWithoutSymbolIndexs.push(i);
+    !hasColhash && colWithoutSymbolIndexs.push(i);
+  }
+
+  for (let n = 1; n <= id; n++) {
+    let i = map.get(n)?.i!;
+    let j =map.get(n)?.j!
+    let r = getNewIndex(i, rowWithoutSymbolIndexs, times);
+    let c = getNewIndex(j, colWithoutSymbolIndexs, times);
+    map.set(n, { i: r, j: c });
+  }
+  let sum = 0;
+  for (let n = 1; n <= id; n++) {
+    for (let x = n + 1; x <= id; x++) {
+      let nPosition = map.get(n);
+      let xPosition = map.get(x);
+      let distance =
+        Math.abs(nPosition!.i - xPosition!.i) +
+        Math.abs(nPosition!.j - xPosition!.j);
+      sum = sum + distance;
+    }
+  }
+  return sum;
+}
 function getSum(rows: string[][], times: number, symbol: string) {
   const { rowWithoutSymbolIndexs, colWithoutSymbolIndexs } =
     getIndexsRowColWithoutSymbol(rows, symbol);
@@ -27,22 +72,14 @@ function getSum(rows: string[][], times: number, symbol: string) {
     times,
   );
   let sum = 0;
-  const setIdDone = new Set();
   for (let n = 1; n <= lastId; n++) {
-    for (let x = 1; x <= lastId; x++) {
-      if (
-        x !== n &&
-        !setIdDone.has(n + " " + x) &&
-        !setIdDone.has(x + " " + n)
-      ) {
-        let nPosition = mapIdPosition.get(n);
-        let xPosition = mapIdPosition.get(x);
-        let distance =
-          Math.abs(nPosition!.i - xPosition!.i) +
-          Math.abs(nPosition!.j - xPosition!.j);
-        sum = sum + distance;
-        setIdDone.add(n + " " + x);
-      }
+    for (let x = n + 1; x <= lastId; x++) {
+      let nPosition = mapIdPosition.get(n);
+      let xPosition = mapIdPosition.get(x);
+      let distance =
+        Math.abs(nPosition!.i - xPosition!.i) +
+        Math.abs(nPosition!.j - xPosition!.j);
+      sum = sum + distance;
     }
   }
   return sum;
