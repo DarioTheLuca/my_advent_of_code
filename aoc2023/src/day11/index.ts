@@ -40,7 +40,7 @@ function getSumOptimezed(matrix: string[][], times: number, symbol: string) {
 
   for (let n = 1; n <= id; n++) {
     let i = map.get(n)?.i!;
-    let j =map.get(n)?.j!
+    let j = map.get(n)?.j!;
     let r = getNewIndex(i, rowWithoutSymbolIndexs, times);
     let c = getNewIndex(j, colWithoutSymbolIndexs, times);
     map.set(n, { i: r, j: c });
