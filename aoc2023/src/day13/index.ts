@@ -4,8 +4,7 @@ const parseInput = (rawInput: string) => {
   return rawInput.split("\n\n").map((e) => e.split("\n"));
 };
 
- function solution(rows:string[][],diffPossible:number){
-  
+function solution(rows: string[][], diffPossible: number) {
   let sum = 0;
 
   for (const row of rows) {
@@ -52,20 +51,20 @@ const parseInput = (rawInput: string) => {
 
     sum = sum + columnsBefore + 100 * rowsBefore;
   }
-  return sum
- }
+  return sum;
+}
 const part1 = (rawInput: string) => {
   const diffPossible = 0;
   const rows = parseInput(rawInput);
-  
-  return solution(rows,diffPossible)
+
+  return solution(rows, diffPossible);
 };
 
 const part2 = (rawInput: string) => {
   const diffPossible = 1;
   const rows = parseInput(rawInput);
-  
-  return solution(rows,diffPossible)
+
+  return solution(rows, diffPossible);
 };
 
 run({
