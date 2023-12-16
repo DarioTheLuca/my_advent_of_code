@@ -11,16 +11,8 @@ const part1 = (rawInput: string) => {
   const t1 = performance.now();
   dfs(rows, 0, 0, "left", encounter);
   // bfs(rows,0,0,'left',encounter);
-  
-  const ns = new Set(
-    Array.from(encounter).map((e) =>
-      e
-        .replace("left", "")
-        .replace("right", "")
-        .replace("up", "")
-        .replace("down", ""),
-    ),
-  );
+
+  const ns = removeFromInfo(encounter);
 
   return ns.size;
 };
@@ -55,10 +47,11 @@ function bfs(
   while (queue.getSize() > 0) {
     const curr = queue.deQueue();
     if (curr !== -1) {
-      if (encounter.has(curr.i + "-" + curr.from + curr.j)) continue;
       encounter.add(curr.i + "-" + curr.from + curr.j);
       const nexts = getNext(matrix, curr.i, curr.j, curr.from);
-      nexts.forEach((n) => queue.enQueue(n));
+      nexts.forEach(
+        (n) => !encounter.has(n.i + "-" + n.from + n.j) && queue.enQueue(n),
+      );
     }
   }
 }
@@ -67,54 +60,47 @@ function getNext(matrix: string[], r: number, c: number, from: string) {
   let clen = matrix[0].length;
   let rlen = matrix.length;
   const currCell = matrix[r][c];
-  const result = [];
+  const fromLeftToRight = { i: r, j: c + 1, from: "left" };
+  const fromRightToLeft = { i: r, j: c - 1, from: "right" };
+  const fromUpToBottom = { i: r + 1, j: c, from: "up" };
+  const fromBottomUp = { i: r - 1, j: c, from: "down" };
   if (currCell === ".") {
-    if (from === "left" && c + 1 < clen)
-      result.push({ i: r, j: c + 1, from: "left" });
-    if (from === "right" && c - 1 >= 0)
-      result.push({ i: r, j: c - 1, from: "right" });
-    if (from === "up" && r + 1 < rlen)
-      result.push({ i: r + 1, j: c, from: "up" });
-    if (from === "down" && r - 1 >= 0)
-      result.push({ i: r - 1, j: c, from: "down" });
+    if (from === "left" && c + 1 < clen) return [fromLeftToRight];
+    if (from === "right" && c - 1 >= 0) return [fromRightToLeft];
+    if (from === "up" && r + 1 < rlen) return [fromUpToBottom];
+    if (from === "down" && r - 1 >= 0) return [fromBottomUp];
   } else if (currCell === "|") {
     if (from === "left" || from === "right") {
-      r - 1 >= 0 && result.push({ i: r - 1, j: c, from: "down" });
-      r + 1 < rlen && result.push({ i: r + 1, j: c, from: "up" });
+      const rt = r + 1 < rlen;
+      const rb = r - 1 >= 0;
+      if (rb && rt) return [fromBottomUp, fromUpToBottom];
+      if (rb) return [fromBottomUp];
+      if (rt) return [fromUpToBottom];
     }
-    if (from === "up" && r + 1 < rlen)
-      result.push({ i: r + 1, j: c, from: "up" });
-    if (from === "down" && r - 1 >= 0)
-      result.push({ i: r - 1, j: c, from: "down" });
+    if (from === "up" && r + 1 < rlen) return [fromUpToBottom];
+    if (from === "down" && r - 1 >= 0) return [fromBottomUp];
   } else if (currCell === "-") {
     if (from === "up" || from === "down") {
-      c - 1 >= 0 && result.push({ i: r, j: c - 1, from: "right" });
-      c + 1 < clen && result.push({ i: r, j: c + 1, from: "left" });
+      const cb = c - 1 >= 0;
+      const ct = c + 1 < clen;
+      if (cb && ct) return [fromLeftToRight, fromRightToLeft];
+      if (cb) return [fromRightToLeft];
+      if (ct) return [fromLeftToRight];
     }
-    if (from === "left" && c + 1 < clen)
-      result.push({ i: r, j: c + 1, from: "left" });
-    if (from === "right" && c - 1 >= 0)
-      result.push({ i: r, j: c - 1, from: "right" });
+    if (from === "left" && c + 1 < clen) return [fromLeftToRight];
+    if (from === "right" && c - 1 >= 0) return [fromRightToLeft];
   } else if (currCell === "/") {
-    if (from === "left" && r - 1 >= 0)
-      result.push({ i: r - 1, j: c, from: "down" });
-    if (from === "right" && r + 1 < rlen)
-      result.push({ i: r + 1, j: c, from: "up" });
-    if (from === "up" && c - 1 >= 0)
-      result.push({ i: r, j: c - 1, from: "right" });
-    if (from === "down" && c + 1 < clen)
-      result.push({ i: r, j: c + 1, from: "left" });
+    if (from === "left" && r - 1 >= 0) return [fromBottomUp];
+    if (from === "right" && r + 1 < rlen) return [fromUpToBottom];
+    if (from === "up" && c - 1 >= 0) return [fromRightToLeft];
+    if (from === "down" && c + 1 < clen) return [fromLeftToRight];
   } else if (currCell === "!") {
-    if (from === "right" && r - 1 >= 0)
-      result.push({ i: r - 1, j: c, from: "down" });
-    if (from === "left" && r + 1 < rlen)
-      result.push({ i: r + 1, j: c, from: "up" });
-    if (from === "down" && c - 1 >= 0)
-      result.push({ i: r, j: c - 1, from: "right" });
-    if (from === "up" && c + 1 < clen)
-      result.push({ i: r, j: c + 1, from: "left" });
+    if (from === "right" && r - 1 >= 0) return [fromBottomUp];
+    if (from === "left" && r + 1 < rlen) return [fromUpToBottom];
+    if (from === "down" && c - 1 >= 0) return [fromRightToLeft];
+    if (from === "up" && c + 1 < clen) return [fromLeftToRight];
   }
-  return result;
+  return [];
 }
 
 class Queue<T> {
@@ -156,7 +142,6 @@ class Queue<T> {
   }
 }
 
-
 const part2 = (rawInput: string) => {
   const rows = parseInput(rawInput);
   let max = 0;
@@ -165,66 +150,42 @@ const part2 = (rawInput: string) => {
     dfs(rows, i, 0, "left", encounter);
     // bfs(rows,i,0,'left',encounter)
 
-    const ns = new Set(
-      Array.from(encounter).map((e) =>
-        e
-          .replace("left", "")
-          .replace("right", "")
-          .replace("up", "")
-          .replace("down", ""),
-      ),
-    );
+    const ns = removeFromInfo(encounter);
     max = Math.max(max, ns.size);
     encounter = new Set();
 
-    const t3 = performance.now();
-    dfs(rows,0,rows[0].length-1,'right',encounter)
+    dfs(rows, 0, rows[0].length - 1, "right", encounter);
     // bfs(rows, 0, rows[0].length - 1, "right", encounter);
-    const t4 = performance.now();
 
-    const nsl = new Set(
-      Array.from(encounter).map((e) =>
-        e
-          .replace("left", "")
-          .replace("right", "")
-          .replace("up", "")
-          .replace("down", ""),
-      ),
-    );
+    const nsl = removeFromInfo(encounter);
     max = Math.max(max, nsl.size);
   }
-  
+
   for (let i = 0; i < rows[0].length; i++) {
     encounter = new Set();
     // bfs(rows, 0, i, "up", encounter);
-    dfs(rows,0,i,'up',encounter)
-    const nst = new Set(
-      Array.from(encounter).map((e) =>
-        e
-          .replace("left", "")
-          .replace("right", "")
-          .replace("up", "")
-          .replace("down", ""),
-      ),
-    );
+    dfs(rows, 0, i, "up", encounter);
+    const nst = removeFromInfo(encounter);
     max = Math.max(max, nst.size);
     encounter = new Set();
     // bfs(rows, rows.length - 1, i, "down", encounter);
-    dfs(rows,rows.length-1,i,'down',encounter)
-    const nsb = new Set(
-      Array.from(encounter).map((e) =>
-        e
-          .replace("left", "")
-          .replace("right", "")
-          .replace("up", "")
-          .replace("down", ""),
-      ),
-    );
+    dfs(rows, rows.length - 1, i, "down", encounter);
+    const nsb = removeFromInfo(encounter);
     max = Math.max(max, nsb.size);
   }
   return max;
 };
-
+function removeFromInfo(set: Set<string>) {
+  return new Set(
+    Array.from(set).map((e) =>
+      e
+        .replace("left", "")
+        .replace("right", "")
+        .replace("up", "")
+        .replace("down", ""),
+    ),
+  );
+}
 run({
   part1: {
     tests: [
