@@ -24,9 +24,9 @@ const part1 = (rawInput: string) => {
   const Area = getShoelaceArea(cor);
 
   // Pick's theorem
-  const interiorPoints = getPickInternalPoints(Area, perimeter);
+  const internalPoints = getPickInternalPoints(Area, perimeter);
 
-  return interiorPoints + perimeter;
+  return internalPoints + perimeter;
 };
 
 const part2 = (rawInput: string) => {
@@ -51,9 +51,9 @@ const part2 = (rawInput: string) => {
   const Area = getShoelaceArea(cor);
 
   // Pick's theorem
-  const interiorPoints = getPickInternalPoints(Area, perimeter);
+  const internalPoints = getPickInternalPoints(Area, perimeter);
 
-  return interiorPoints + perimeter;
+  return internalPoints + perimeter;
 };
 
 function getEdgesCoordinates(rows: [string, number][]) {
