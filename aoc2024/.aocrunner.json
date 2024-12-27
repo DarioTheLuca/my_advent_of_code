@@ -306,17 +306,59 @@
       },
       "part2": {
         "solved": false,
-        "result": null,
+        "result": "4",
         "attempts": [],
-        "time": null
+        "time": 5002.3044
       }
     },
     {
       "part1": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "94284",
         "attempts": [],
-        "time": null
+        "time": 14939.1208
+      },
+      "part2": {
+        "solved": true,
+        "result": "116821732384052",
+        "attempts": [],
+        "time": 177.8965
+      }
+    },
+    {
+      "part1": {
+        "solved": true,
+        "result": "13022553808",
+        "attempts": [],
+        "time": 512.4077
+      },
+      "part2": {
+        "solved": true,
+        "result": "1555",
+        "attempts": [],
+        "time": 0.406
+      }
+    },
+    {
+      "part1": {
+        "solved": true,
+        "result": "1344",
+        "attempts": [],
+        "time": 137.5626
+      },
+      "part2": {
+        "solved": false,
+        "result": "0",
+        "attempts": [],
+        "time": 38.4882
+      }
+    },
+    {
+      "part1": {
+        "solved": true,
+        "result": "51657025112326",
+        "attempts": [],
+        "time": 0.6416
       },
       "part2": {
         "solved": false,
@@ -327,52 +369,10 @@
     },
     {
       "part1": {
-        "solved": false,
-        "result": null,
+        "solved": true,
+        "result": "3107",
         "attempts": [],
-        "time": null
-      },
-      "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
-      }
-    },
-    {
-      "part1": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
-      },
-      "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
-      }
-    },
-    {
-      "part1": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
-      },
-      "part2": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
-      }
-    },
-    {
-      "part1": {
-        "solved": false,
-        "result": null,
-        "attempts": [],
-        "time": null
+        "time": 32.9293
       },
       "part2": {
         "solved": false,
