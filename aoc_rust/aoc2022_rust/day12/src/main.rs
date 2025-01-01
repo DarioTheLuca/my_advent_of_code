@@ -1,19 +1,98 @@
 use std::{
-    collections::{HashMap, VecDeque},
+    collections::{HashSet, VecDeque},
     fs,
 };
-
-fn main() {
-    part("ex.txt", 1);
-    part("ex.txt", 2);
-}
-
 struct Cell {
     val: String,
     row: isize,
     col: isize,
     count: u32,
     dir: (isize, isize),
+}
+
+fn main() {
+    part("input.txt", 1);
+    part("input.txt", 2);
+}
+
+fn part(path: &str, part: u8) {
+    let raw_input = fs::read_to_string(path).unwrap();
+    let input = raw_input.lines();
+
+    let mut start_positions: Vec<(isize, isize)> = vec![];
+    let mut matrix: Vec<Vec<&str>> = vec![];
+    for (i, row) in input.enumerate() {
+        let splitted_row = row
+            .split("")
+            .filter(|el| !el.is_empty())
+            .collect::<Vec<&str>>();
+
+        matrix.push(splitted_row);
+        for (j, cell) in row.split("").filter(|el| !el.is_empty()).enumerate() {
+            if part == 1 {
+                match cell {
+                    "S" => {
+                        start_positions.push((i as isize, j as isize));
+                    }
+                    _ => (),
+                }
+            } else if part == 2 {
+                match cell {
+                    "S" | "a" => {
+                        start_positions.push((i as isize, j as isize));
+                    }
+                    _ => (),
+                }
+            }
+        }
+    }
+
+    let mut min = f64::INFINITY as u32;
+
+    for starting_position in start_positions {
+        let mut queue: VecDeque<Cell> = VecDeque::new();
+        let directions: [(isize, isize); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+        let (s_row, s_col) = starting_position;
+
+        for direction in directions {
+            let cell = Cell {
+                row: s_row,
+                col: s_col,
+                count: 0,
+                val: "S".to_string(),
+                dir: direction,
+            };
+            queue.push_back(cell);
+        }
+        let mut seen_set: HashSet<String> = HashSet::new();
+        while queue.len() > 0 {
+            let curr_cell = queue.pop_front().unwrap();
+            let id = get_id_dir((curr_cell.row as isize, curr_cell.col as isize));
+            if seen_set.contains(&id) {
+                continue;
+            } else {
+                seen_set.insert(id);
+            }
+            if curr_cell.count >= min {
+                break;
+            }
+            if curr_cell.val == "E" {
+                min = curr_cell.count;
+                break;
+            }
+
+            let next_cells = get_next_cells(&matrix, &curr_cell);
+            let curr_val = mapping_letters_to_number(curr_cell.val.as_str());
+            for next_cell in next_cells {
+                let next_val = mapping_letters_to_number(next_cell.val.as_str());
+                if next_val - curr_val <= 1 {
+                    queue.push_back(next_cell);
+                }
+            }
+        }
+    }
+
+    println!("Solution for part {} for path {} is: {}", part, path, min)
 }
 
 fn mapping_letters_to_number(letter: &str) -> i8 {
@@ -83,93 +162,4 @@ fn get_next_cells(matrix: &Vec<Vec<&str>>, curr_cell: &Cell) -> Vec<Cell> {
         }
     }
     return next_cells;
-}
-fn get_cache_id(r: isize, c: isize, dr: isize, dc: isize) -> String {
-    format!("{r},{c},{dr},{dc}")
-}
-fn part(path: &str, part: u8) {
-    let raw_input = fs::read_to_string(path).unwrap();
-    let input = raw_input.lines();
-
-    let mut start_positions: Vec<(isize, isize)> = vec![];
-    let mut matrix: Vec<Vec<&str>> = vec![];
-    for (i, row) in input.enumerate() {
-        let splitted_row = row
-            .split("")
-            .filter(|el| !el.is_empty())
-            .collect::<Vec<&str>>();
-
-        matrix.push(splitted_row);
-        for (j, cell) in row.split("").filter(|el| !el.is_empty()).enumerate() {
-            if part == 1 {
-                match cell {
-                    "S" => {
-                        start_positions.push((i as isize, j as isize));
-                    }
-                    _ => (),
-                }
-            } else if part == 2 {
-                match cell {
-                    "S" | "a" => {
-                        start_positions.push((i as isize, j as isize));
-                    }
-                    _ => (),
-                }
-            }
-        }
-    }
-
-    let mut min = f64::INFINITY as u32;
-
-    for starting_position in start_positions {
-        let mut queue: VecDeque<Cell> = VecDeque::new();
-        let directions: [(isize, isize); 4] = [(0, 1), (0, -1), (1, 0), (-1, 0)];
-        let (s_row, s_col) = starting_position;
-
-        for direction in directions {
-            let cell = Cell {
-                row: s_row,
-                col: s_col,
-                count: 0,
-                val: "S".to_string(),
-                dir: direction,
-            };
-            queue.push_back(cell);
-        }
-        let mut seen: HashMap<String, u32> = HashMap::new();
-        while queue.len() > 0 {
-            let curr_cell = queue.pop_front().unwrap();
-            if curr_cell.count >= min {
-                continue;
-            }
-            if curr_cell.val == "E" {
-                if curr_cell.count < min {
-                    min = curr_cell.count;
-                }
-                continue;
-            }
-            let (dr, dc) = curr_cell.dir;
-            let cache_id = get_cache_id(curr_cell.row, curr_cell.col, dr, dc);
-            if seen.contains_key(&cache_id) {
-                if *seen.get(&cache_id).unwrap() <= curr_cell.count {
-                    continue;
-                } else {
-                    seen.insert(cache_id, curr_cell.count);
-                };
-            } else {
-                seen.insert(cache_id, curr_cell.count);
-            }
-
-            let next_cells = get_next_cells(&matrix, &curr_cell);
-            let curr_val = mapping_letters_to_number(curr_cell.val.as_str());
-            for next_cell in next_cells {
-                let next_val = mapping_letters_to_number(next_cell.val.as_str());
-                if next_val - curr_val <= 1 {
-                    queue.push_back(next_cell);
-                }
-            }
-        }
-    }
-
-    println!("Solution for part {} for path {} is: {}", part, path, min)
 }
